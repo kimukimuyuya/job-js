@@ -5,6 +5,10 @@ question_list.push(['たかなわ', 'こうわ', 'たかわ']);
 question_list.push(['かめいど', 'かめと', 'かめど']);
 question_list.push(['こうじまち', 'おかとまち', 'かゆまち']);
 
+// 正解数・回答数の初期化
+var correctAnswers = 0;
+var answeredQuestions = 0;
+
 // 解答クリック時の処理
 // question_id：問題番号、1問目の場合は[1]を受け取る
 // selection_id：回答番号、選択された選択肢の番号を受け取る
@@ -25,17 +29,43 @@ function check(question_id, selection_id, valid_id) {
     selectiontext.className = 'answer_invalid';
     validtext.className = 'answer_valid';
 
-    // 正解・不正解の表示設定処理
-    var answerbox = document.getElementById('answerbox_' + question_id);
-    var answertext = document.getElementById('answertext_' + question_id);
+    // ---------------------jqueryに書き換え---------------------
+
+    // 正解・不正解の表示設定処理(もともとのコード)
+    // var answerbox = document.getElementById('answerbox_' + question_id);
+    // var answertext = document.getElementById('answertext_' + question_id);
+    // if (selection_id == valid_id) {
+    //       answertext.className = 'answerbox_valid';
+    //     answertext.innerText = '正解！';
+    // } else {
+    //     answertext.className = 'answerbox_invalid';
+    //     answertext.innerText = '不正解！';
+    // }
+    // answerbox.style.display = 'block';
+
+    var answerbox = $('#answerbox_' + question_id);
+    var answertext = $('#answertext_' + question_id);
     if (selection_id == valid_id) {
-        answertext.className = 'answerbox_valid';
-        answertext.innerText = '正解！';
+      answertext.removeClass().addClass('answerbox_valid');
+      answertext.text('正解！');
+      // 正解したときにcorrectAnswersに1を足す
+      correctAnswers++;
     } else {
-        answertext.className = 'answerbox_invalid';
-        answertext.innerText = '不正解！';
+      answertext.removeClass().addClass('answerbox_invalid');
+      answertext.text('不正解！');
     }
-    answerbox.style.display = 'block';
+    answerbox.hide().fadeIn('slow');
+
+    // 問題に回答したらansweredQuestionsに1を足す
+    answeredQuestions++;
+    // 全部の問題に答え終わったら結果を表示する
+    if (answeredQuestions == question_list.length) { 
+      var contents = `<div>`
+          + `    <h1>あなたは${answeredQuestions}問中${correctAnswers}問正解しました</h1>`
+          + `    </div >`;
+      $('#main').append(contents);
+    }
+    // ------------------------------------------------------------
 }
 
 // 問題分のHTMLを生成して出力する
